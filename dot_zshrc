@@ -103,6 +103,8 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+
 # Homebrew 基础设置 (Zsh 版)
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
