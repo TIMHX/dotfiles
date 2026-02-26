@@ -158,26 +158,22 @@ source "/home/xing/.openclaw/completions/openclaw.zsh"
 
 # 快速同步本地改动到 GitHub
 czp() {
-    echo "🔍 正在同步 ~/.zshrc 到 chezmoi..."
+    echo "📦 正在同步配置到 chezmoi..."
+    # 同时强制添加 zshrc 和 nvim 配置文件夹
     chezmoi add --force ~/.zshrc
+    chezmoi add --force ~/.config/nvim
     
-    # 获取 chezmoi 仓库的实际路径
-    local SOURCE_DIR=$(chezmoi source-path)
+    local cp=$(chezmoi source-path)
     
-    echo "移动到仓库: $SOURCE_DIR"
-    cd "$SOURCE_DIR" || return
-    
-    echo "提交更改..."
-    git add -A
-    # 如果没有变化，git commit 会返回 1，这里用 || 保证脚本继续运行
-    git commit -m "update: $(date)" || echo "⚠️ 没有检测到内容变化"
-    
-    echo "推送至 GitHub..."
-    git push origin main
-    
-    # 关键：回到你刚才的目录，而不是直接 exit 关闭终端
-    cd - > /dev/null
-    echo "✅ 同步完成！"
+    # 执行 Git 同步
+    git -C "$cp" add -A
+    if git -C "$cp" commit -m "update dotfiles: $(date +%H:%M:%S)"; then
+        echo "🚀 正在推送至 GitHub..."
+        git -C "$cp" push origin main
+        echo "✅ 全部同步完成！"
+    else
+        echo "✨ 配置无变动，无需推送。"
+    fi
 }
 
 # 快速从 GitHub 拉取更新
