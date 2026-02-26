@@ -155,3 +155,9 @@ eval "$(doppler completion zsh)"
 
 # OpenClaw Completion
 source "/home/xing/.openclaw/completions/openclaw.zsh"
+
+# 快速同步本地改动到 GitHub
+alias czp='chezmoi add --force ~/.zshrc && chezmoi cd && git add . && git commit -m "update dotfiles" && git push && exit'
+
+# 快速从 GitHub 拉取更新
+alias czu='chezmoi update'
