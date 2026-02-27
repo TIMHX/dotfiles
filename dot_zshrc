@@ -158,25 +158,55 @@ eval "$(doppler completion zsh)"
 # OpenClaw Completion
 source "/home/xing/.openclaw/completions/openclaw.zsh"
 
-# 快速同步本地改动到 GitHub
-czp() {
-    echo "📦 正在同步配置到 chezmoi..."
-    # 同时强制添加 zshrc 和 nvim 配置文件夹
-    chezmoi add --force ~/.zshrc
-    chezmoi add --force ~/.config/nvim
+# 别名建议
+alias cd="z"
+
+function t() {
+  # 1. 获取输入并选择
+  local session=$(sesh list -z | fzf --height 40% --reverse --header "Connect to Session")
+  # 2. 如果用户没取消选择
+  if [[ -n "$session" ]]; then
+    # 【核心修复】: 
+    # 使用 sed 移除所有非打印字符/特殊图标
+    # 并使用 xargs 处理可能存在的波浪号 (~) 路径展开问题
+    local clean_session=$(echo "$session" | sed 's/[^[:print:]]//g' | awk '{print $NF}')
     
-    local cp=$(chezmoi source-path)
-    
-    # 执行 Git 同步
-    git -C "$cp" add -A
-    if git -C "$cp" commit -m "update dotfiles: $(date +%H:%M:%S)"; then
-        echo "🚀 正在推送至 GitHub..."
-        git -C "$cp" push origin main
-        echo "✅ 全部同步完成！"
-    else
-        echo "✨ 配置无变动，无需推送。"
-    fi
+    # 3. 连接
+    sesh connect "$clean_session"
+  fi
 }
+
+czp() {
+   # 强制同步所有已追踪的文件（把你本地的修改同步到 chezmoi 备份目录）
+   echo "🔄 Syncing local changes to source..."
+   chezmoi re-add
+   # 进入 chezmoi 源码目录执行 git 操作
+   # -C 参数允许你在任何地方对指定目录运行 git
+   local SOURCE_DIR=$(chezmoi source-path)
+
+   if [ -n "$(git -C "$SOURCE_DIR" status --porcelain)" ]; then
+     echo "📝 Committing changes..."
+     git -C "$SOURCE_DIR" add .
+     git -C "$SOURCE_DIR" commit -m "Auto-update: $(date +'%Y-%m-%d %H:%M:%S')"
+     
+     echo "📤 Pushing to remote..."
+     git -C "$SOURCE_DIR" push
+     echo "✅ Done!"
+   else
+     echo "✨ Everything is up to date."
+   fi
+}
+
+cza() {
+    if [ -z "$1" ]; then
+      echo "Usage: cza <file_path>"
+        return 1
+    fi
+    chezmoi add "$1"
+    echo "➕ Added $1 to chezmoi."
+    czp # 自动调用上面的上传函数
+}
+
 
 # 快速从 GitHub 拉取更新
 alias czu='chezmoi update'
