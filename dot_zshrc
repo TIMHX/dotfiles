@@ -225,4 +225,4 @@ alias czu='chezmoi update'
 
 # Test czp functionality at 2026-02-26
 
-PLUGIN_DIR="/path/to/memory-lancedb-pro"
+PLUGIN_DIR="/home/xing/.openclaw/workspace/plugins/memory-lancedb-pro"
