@@ -222,8 +222,4 @@ eval "$(doppler completion zsh)"
 # OpenClaw Completion
 source "/home/xing/.openclaw/completions/openclaw.zsh"
 
-# 初始化 Zoxide (替代 cd)
-eval "$(zoxide init zsh)"
-
-# 别名建议
-alias cd="z"
+eval "$(zoxide init zsh --cmd cd)"
