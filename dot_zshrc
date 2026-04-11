@@ -213,9 +213,6 @@ GOG_KEYRING_PASSWORD=$(grep GOG_KEYRING_PASSWORD /home/xing/.openclaw/.env | cut
 # 初始化 Starship 提示符
 eval "$(starship init zsh)"
 
-# 初始化 Zoxide (替代 cd)
-eval "$(zoxide init zsh)"
-
 # Doppler 补全 (Zsh 版)
 eval "$(doppler completion zsh)"
 
@@ -224,6 +221,9 @@ eval "$(doppler completion zsh)"
 
 # OpenClaw Completion
 source "/home/xing/.openclaw/completions/openclaw.zsh"
+
+# 初始化 Zoxide (替代 cd)
+eval "$(zoxide init zsh)"
 
 # 别名建议
 alias cd="z"
