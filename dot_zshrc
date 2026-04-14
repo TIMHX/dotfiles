@@ -208,7 +208,7 @@ alias czu='chezmoi update'
 # Test czp functionality at 2026-02-26
 
 PLUGIN_DIR="/home/xing/.openclaw/workspace/plugins/memory-lancedb-pro"export 
-GOG_KEYRING_PASSWORD=$(grep GOG_KEYRING_PASSWORD /home/xing/.openclaw/.env | cut -d= -f2)
+GOG_KEYRING_PASSWORD=$(grep GOG_KEYRING_PASSWORD /home/xing/.env | cut -d= -f2)
 
 # 初始化 Starship 提示符
 eval "$(starship init zsh)"
@@ -219,7 +219,7 @@ eval "$(doppler completion zsh)"
 # FZF 模糊搜索 (如果有安装)
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# OpenClaw Completion
-source "/home/xing/.openclaw/completions/openclaw.zsh"
+# # OpenClaw Completion
+# source "/home/xing/.openclaw/completions/openclaw.zsh"
 
 eval "$(zoxide init zsh --cmd cd)"
