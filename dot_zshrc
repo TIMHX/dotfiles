@@ -109,7 +109,7 @@ export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # 路径补全
-export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
+export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/lib/node_modules/.bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 
 # 运行时环境 (针对 OpenClaw/Systemd)
@@ -222,4 +222,7 @@ eval "$(doppler completion zsh)"
 # # OpenClaw Completion
 # source "/home/xing/.openclaw/completions/openclaw.zsh"
 
-eval "$(zoxide init zsh --cmd cd)"
+# Hermes 更新 + 补丁一键恢复
+alias hu='hermes update && bash ~/hermes-custom-tools/hermes-patches/apply-patches.sh && hermes gateway restart'
+
+eval "$(zoxide init zsh --cmd cd)"[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
