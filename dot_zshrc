@@ -207,9 +207,6 @@ alias czu='chezmoi update'
 
 # Test czp functionality at 2026-02-26
 
-PLUGIN_DIR="/home/xing/.openclaw/workspace/plugins/memory-lancedb-pro"export 
-GOG_KEYRING_PASSWORD=$(grep GOG_KEYRING_PASSWORD /home/xing/.env | cut -d= -f2)
-
 # 初始化 Starship 提示符
 eval "$(starship init zsh)"
 
@@ -219,10 +216,8 @@ eval "$(doppler completion zsh)"
 # FZF 模糊搜索 (如果有安装)
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# # OpenClaw Completion
-# source "/home/xing/.openclaw/completions/openclaw.zsh"
-
 # Hermes 更新 + 补丁一键恢复
 alias hu='hermes update && bash ~/hermes-custom-tools/hermes-patches/apply-patches.sh && hermes gateway restart'
 
-eval "$(zoxide init zsh --cmd cd)"[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+setopt INTERACTIVE_COMMENTS
+eval "$(zoxide init zsh --cmd cd)"
