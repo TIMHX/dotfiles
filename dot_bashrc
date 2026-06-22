@@ -123,34 +123,6 @@ eval "$(starship init bash)"
 export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/lib/node_modules/.bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 
-eval "$(doppler completion bash)"
-alias claude='doppler run -- claude'
-# alias openclaw='doppler run -- openclaw'
-openclaw() {
-    # 强制开启 Shell 环境导入作为兜底
-    export OPENCLAW_LOAD_SHELL_ENV=1
-    # 使用 doppler run 注入所有变量
-    doppler run -- openclaw "$@"
-}
-# 升级 openclaw 别名
-# openclaw() {
-#     # 定义内存中的临时文件路径
-#     local tmp_env="/dev/shm/.oc_env_$(date +%s)"
-    
-#     # 1. 导出变量并严格限制权限（仅当前用户可见）
-#     doppler secrets download --format=docker --output="$tmp_env" --no-guarantee-identity
-#     chmod 600 "$tmp_env"
-    
-#     echo "Using secure memory-backed env: $tmp_env"
-    
-#     # 2. 运行 OpenClaw，并告诉它读取这个临时文件
-#     # 注意：确保你的 openclaw.json 中配置了指向该变量路径，或者作为参数传入
-#     doppler run -- openclaw "$@"
-    
-#     # 3. 运行结束后立即销毁内存中的残留
-#     rm -f "$tmp_env"
-# }
-
 alias nano='sudo nano'
 alias apt='sudo apt'
 alias systemctl='sudo systemctl'
@@ -167,8 +139,6 @@ export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
 # 3. 修正 Session ID (移除报错的 shell-stat)
 export XDG_SESSION_ID=$(cat /proc/self/sessionid)
 
-# OpenClaw Completion
-source "/home/xing/.openclaw/completions/openclaw.bash"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
@@ -180,4 +150,4 @@ source "/home/xing/.openclaw/completions/openclaw.bash"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-export GOG_KEYRING_PASSWORD=$(grep GOG_KEYRING_PASSWORD /home/xing/.openclaw/.env | cut -d= -f2)
+# GOG_KEYRING_PASSWORD now in Bitwarden, injected by Hermes

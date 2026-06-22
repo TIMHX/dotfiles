@@ -134,14 +134,6 @@ alias apt='sudo apt'
 alias systemctl='sudo systemctl'
 alias docker='sudo docker'
 
-# Doppler & AI 工具
-alias claude='doppler run -- claude'
-
-# # OpenClaw 核心函数 (已适配 Zsh)
-# openclaw() {
-#     export OPENCLAW_LOAD_SHELL_ENV=1
-#     doppler run -- openclaw "$@"
-# }
 
 function t() {
   # 1. 获取输入并选择
@@ -207,11 +199,11 @@ alias czu='chezmoi update'
 
 # Test czp functionality at 2026-02-26
 
+# GOG_KEYRING_PASSWORD now in Bitwarden, injected by Hermes
+
 # 初始化 Starship 提示符
 eval "$(starship init zsh)"
 
-# Doppler 补全 (Zsh 版)
-eval "$(doppler completion zsh)"
 
 # FZF 模糊搜索 (如果有安装)
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
