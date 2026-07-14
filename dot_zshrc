@@ -3,7 +3,7 @@
 # ============================================================
 
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="robbyrussell"
+ZSH_THEME=""                    # 禁用 oh-my-zsh 主题，由 starship 接管
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
