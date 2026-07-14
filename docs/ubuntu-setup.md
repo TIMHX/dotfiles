@@ -127,12 +127,26 @@ chezmoi status
 ```
 ~/
 ├── .local/bin/              # starship, zoxide, uv, chezmoi, sesh
+├── .config/
+│   └── starship.toml        # chezmoi 管理（gruvbox_dark 主题）
 ├── .oh-my-zsh/              # oh-my-zsh
 ├── .nvm/                    # Node.js
 ├── .local/share/chezmoi/    # dotfiles git repo
 ├── .zshrc                   # chezmoi 管理
 └── .ssh/id_ed25519          # GitHub
 ```
+
+## 踩坑记录
+
+### `starship.toml` 未加入 chezmoi → 终端看不见主题
+
+**现象**：`chezmoi apply` 后 `eval "$(starship init zsh)"` 正常执行，但 starship 跑默认极简预设（`user in host in path \n ❯`），看起来跟没装一样。
+
+**根因**：`.zshrc` 加入了 chezmoi，但 `~/.config/starship.toml` 忘了 `chezmoi add`。
+
+**修复**：`chezmoi add ~/.config/starship.toml` → commit → push。新机器 `chezmoi apply` 即可。
+
+---
 
 ## 与 VPS 的差异
 
