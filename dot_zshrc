@@ -1,215 +1,86 @@
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
+# ============================================================
+# Ubuntu Desktop Zsh 配置 | chezmoi 管理 | repo: TIMHX/dotfiles
+# ============================================================
 
-# Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
-
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time Oh My Zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="robbyrussell"
-
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in $ZSH/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
-
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-
-# Uncomment one of the following lines to change the auto-update behavior
-# zstyle ':omz:update' mode disabled  # disable automatic updates
-# zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
-
-# Uncomment the following line to change how often to auto-update (in days).
-# zstyle ':omz:update' frequency 13
-
-# Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS="true"
-
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# You can also set it to another string to have that shown instead of the default red dots.
-# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
-# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
 plugins=(git)
-
 source $ZSH/oh-my-zsh.sh
 
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='nvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch $(uname -m)"
-
-# Set personal aliases, overriding those provided by Oh My Zsh libs,
-# plugins, and themes. Aliases can be placed here, though Oh My Zsh
-# users are encouraged to define aliases within a top-level file in
-# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
-# - $ZSH_CUSTOM/aliases.zsh
-# - $ZSH_CUSTOM/macos.zsh
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-
-export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
-
-# Homebrew 基础设置 (Zsh 版)
+# ---- PATH ----
+export PATH="$HOME/.local/bin:$PATH"
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-# 路径补全
-export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/lib/node_modules/.bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-
-# 运行时环境 (针对 OpenClaw/Systemd)
-export XDG_RUNTIME_DIR="/run/user/$(id -u)"
-export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
-export XDG_SESSION_ID=$(cat /proc/self/sessionid)
-
-# NVM (Node Version Manager)
+# ---- NVM ----
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
-# 基础别名
-alias ls='ls --color=auto'
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-alias grep='grep --color=auto'
+# ---- Starship 提示符 ----
+eval "$(starship init zsh)"
 
-# 管理权限快捷键
-alias nano='sudo nano'
+# ---- FZF ----
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# ---- Zoxide (z/cd) ----
+eval "$(zoxide init zsh --cmd cd)"
+
+# ---- 别名 ----
+alias ls='eza --icons'
+alias ll='eza -alF --icons --git'
+alias la='eza -a --icons'
+alias l='eza -F --icons'
+alias tree='eza --tree --icons'
+alias grep='rg'
+alias cat='bat'
+alias find='fd'
+
 alias apt='sudo apt'
-alias systemctl='sudo systemctl'
-alias docker='sudo docker'
 
-
-function t() {
-  # 1. 获取输入并选择
-  local session=$(sesh list -z | fzf --height 40% --reverse --header "Connect to Session")
-  # 2. 如果用户没取消选择
-  if [[ -n "$session" ]]; then
-    # 【核心修复】: 
-    # 使用 sed 移除所有非打印字符/特殊图标
-    # 并使用 xargs 处理可能存在的波浪号 (~) 路径展开问题
-    local clean_session=$(echo "$session" | sed 's/[^[:print:]]//g' | awk '{print $NF}')
-    
-    # 3. 连接
-    sesh connect "$clean_session"
-  fi
-}
-
+# ---- Chezmoi dotfiles 管理 ----
 czp() {
-    # 1. 同步本地修改到 chezmoi 备份目录
-    echo "🔄 Syncing local changes to source..."
     chezmoi re-add
-
     local SOURCE_DIR=$(chezmoi source-path)
-
-    # 2. 检查是否有变动
     if [ -n "$(git -C "$SOURCE_DIR" status --porcelain)" ]; then
-        echo "🧐 Current changes in source directory:"
-        # 打印简短的状态，让你一眼看出哪些文件变了
+        echo "🧐 Current changes:"
         git -C "$SOURCE_DIR" status --short
-
-        # 🛑 核心改进：交互式询问
-        echo -n "⚠️  Do you want to commit and push these changes? (y/n) "
+        echo -n "⚠️  Commit and push? (y/n) "
         read -r answer
-        
         if [[ "$answer" =~ ^[Yy]$ ]]; then
-            echo "📝 Committing changes..."
             git -C "$SOURCE_DIR" add .
             git -C "$SOURCE_DIR" commit -m "Auto-update: $(date +'%Y-%m-%d %H:%M:%S')"
-            
-            echo "📤 Pushing to remote..."
             git -C "$SOURCE_DIR" push
             echo "✅ Done!"
         else
-            echo "✖️  Push cancelled. Changes are kept in the source directory but not pushed."
+            echo "✖️  Cancelled."
         fi
     else
-        echo "✨ Everything is up to date."
+        echo "✨ Up to date."
     fi
 }
 
 cza() {
     if [ -z "$1" ]; then
-      echo "Usage: cza <file_path>"
+        echo "Usage: cza <file_path>"
         return 1
     fi
     chezmoi add "$1"
     echo "➕ Added $1 to chezmoi."
-    czp # 自动调用上面的上传函数
+    czp
 }
 
-
-# 快速从 GitHub 拉取更新
 alias czu='chezmoi update'
 
-# Test czp functionality at 2026-02-26
+# ---- Tmux session 切换 (sesh + fzf) ----
+function t() {
+    local session=$(sesh list -z | fzf --height 40% --reverse --header "Connect to Session")
+    if [[ -n "$session" ]]; then
+        local clean_session=$(echo "$session" | sed 's/[^[:print:]]//g' | awk '{print $NF}')
+        sesh connect "$clean_session"
+    fi
+}
 
-# GOG_KEYRING_PASSWORD now in Bitwarden, injected by Hermes
-
-# 初始化 Starship 提示符
-eval "$(starship init zsh)"
-
-
-# FZF 模糊搜索 (如果有安装)
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# Hermes 更新 + 补丁一键恢复
-alias hu='hermes update && bash ~/hermes-custom-tools/hermes-patches/apply-patches.sh && hermes gateway restart'
+# ---- XDG ----
+export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
 
 setopt INTERACTIVE_COMMENTS
-eval "$(zoxide init zsh --cmd cd)"
