@@ -1,0 +1,116 @@
+# Starship 主题配置 | dotfiles: TIMHX/dotfiles
+
+# ── 格式字符串 ──
+format = """
+[](color_orange)\
+$os\
+$username\
+[](bg:color_bg3 fg:color_orange)\
+$hostname\
+[](bg:color_bg2 fg:color_bg3)\
+$directory\
+[](fg:color_bg2)\
+$git_branch\
+$git_status\
+$fill\
+$cmd_duration\
+[](bg:color_bg3 fg:color_bg2)\
+$python\
+$nodejs\
+$rust\
+[](bg:color_bg2 fg:color_bg3)\
+$time\
+[](fg:color_bg2)\
+$line_break\
+$character\
+"""
+
+# ── 调色板 ──
+palette = "custom"
+[palettes.custom]
+color_bg2 = "#3B4252"
+color_bg3 = "#434C5E"
+color_orange = "#D08770"
+
+# ── 模块 ──
+[os]
+disabled = false
+style = "bg:color_orange fg:black bold"
+format = "[ $symbol]($style)"
+
+[os.symbols]
+Ubuntu = "󰕈"
+Arch = "󰣇"
+Windows = ""
+Macos = ""
+
+[username]
+style_user = "bg:color_orange fg:black bold"
+format = "[ $user]($style)"
+
+[hostname]
+ssh_only = false
+style = "bg:color_bg3 fg:white bold"
+format = "[ 󰒋 $hostname]($style)"
+
+[directory]
+style = "bg:color_bg2 fg:white"
+format = "[ $path]($style)"
+truncation_length = 3
+truncate_to_repo = true
+
+[directory.substitutions]
+"~/Documents" = "󰈙 "
+"~/Downloads" = " "
+"~/ai-research-wiki" = " wiki"
+"~/us-life-wiki" = " us-life"
+"~/.hermes" = "󰊟 hermes"
+
+[git_branch]
+symbol = " "
+style = "bg:color_bg2 fg:white bold"
+format = "[ $symbol$branch]($style)"
+
+[git_status]
+style = "bg:color_bg2 fg:white"
+format = "[$all_status$ahead_behind]($style)"
+
+[python]
+symbol = " "
+style = "bg:color_bg3 fg:white"
+format = "[ $symbol$version]($style)"
+
+[nodejs]
+symbol = " "
+style = "bg:color_bg3 fg:white"
+format = "[ $symbol$version]($style)"
+
+[rust]
+symbol = " "
+style = "bg:color_bg3 fg:white"
+format = "[ $symbol$version]($style)"
+
+[cmd_duration]
+min_time = 3000
+style = "bg:color_bg3 fg:yellow"
+format = "[  $duration]($style)"
+
+[time]
+disabled = false
+style = "bg:color_bg2 fg:white"
+format = "[  $time]($style)"
+time_format = "%R"
+
+[fill]
+symbol = " "
+
+[line_break]
+disabled = false
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+
+[status]
+disabled = false
