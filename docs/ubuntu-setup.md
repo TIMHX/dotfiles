@@ -146,6 +146,20 @@ chezmoi status
 
 **修复**：`chezmoi add ~/.config/starship.toml` → commit → push。新机器 `chezmoi apply` 即可。
 
+### starship 图标显示希腊字母 (Ω, Φ) 乱码
+
+**现象**：终端里 starship 图标变成 Ω、Φ 等希腊字母。
+
+**根因**：GNOME Terminal 有两个开关—— `font` 设了 Nerd Font 不够，`use-system-font` 默认为 `true` 会覆盖自定义字体。
+
+**修复**：
+```bash
+PROFILE=$(gsettings get org.gnome.Terminal.ProfilesList default | tr -d "'")
+gsettings set "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$PROFILE/" font 'MesloLGS Nerd Font Mono 12'
+gsettings set "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$PROFILE/" use-system-font false
+```
+验证: `starship prompt` 应输出图标而非希腊字母。新开终端窗口生效。
+
 ---
 
 ## 与 VPS 的差异
