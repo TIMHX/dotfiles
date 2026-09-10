@@ -1,0 +1,10 @@
+# ~/.claude holds credentials, session transcripts and shell snapshots.
+# This repo is public, so ignore the whole tree and opt in by allowlist.
+.claude/**
+!.claude
+!.claude/CLAUDE.md
+!.claude/settings.json
+!.claude/skills
+!.claude/skills/**
+!.claude/statusline
+!.claude/statusline/**

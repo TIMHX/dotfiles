@@ -1,0 +1,14 @@
+{
+  "env": {},
+  "modelSettings": {
+    "claude-sonnet-5": {
+      "effortLevel": "medium"
+    }
+  },
+  "model": "opus",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline/statusline.sh",
+    "padding": 0
+  }
+}
