@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# cc-layout N [面板id]
+# 把指定面板所在的 window 调成 N 个面板：1=独占，2=左右，3=左大+右上下，4=四宫格。
+# 是否需要确认由 .tmux.conf 里的绑定判断，这里只管执行。
+set -euo pipefail
+
+N="$1"
+# 必须明确知道操作哪个面板：绑定会显式传入，交互式 shell 用 TMUX_PANE。
+# 绝不 fallback 到无 target 的 display，那会打到别的 client 的活动面板上。
+PANE="${2:-${TMUX_PANE:-}}"
+[ -n "$PANE" ] || { echo "cc-layout: 需要面板 id（第二个参数或 TMUX_PANE）" >&2; exit 1; }
+
+WIN="$(tmux display -p -t "$PANE" '#{window_id}')"
+CWD="$(tmux display -p -t "$PANE" '#{pane_current_path}')"
+
+# 变多：补面板
+while [ "$(tmux display -p -t "$WIN" '#{window_panes}')" -lt "$N" ]; do
+    tmux split-window -t "$WIN" -c "$CWD"
+done
+
+# 变少：按 pane_id 关掉多出来的，不用索引，避免重排后打错
+for pid in $(tmux list-panes -t "$WIN" -F '#{pane_id}' | tail -n +$((N + 1))); do
+    tmux kill-pane -t "$pid"
+done
+
+case "$N" in
+    2) tmux select-layout -t "$WIN" even-horizontal ;;
+    3) tmux set-window-option -t "$WIN" main-pane-width 55%
+       tmux select-layout -t "$WIN" main-vertical ;;
+    4) tmux select-layout -t "$WIN" tiled ;;
+esac
+
+tmux select-pane -t "$(tmux list-panes -t "$WIN" -F '#{pane_id}' | head -1)"
