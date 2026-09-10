@@ -163,22 +163,19 @@ gsettings set "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/prof
 
 ### cc-switch 切换供应商 → Claude Code statusline / 主题 / 插件消失
 
-**现象**：某天起 Claude Code 底部的 statusline（context、5h/7d 用量、花费）不见了，主题也回到默认，插件全部失效。`~/.claude/statusline/statusline.sh` 明明还在，手动喂 JSON 也跑得出来。
+**现象**：某天起 Claude Code 底部的 statusline（context、5h/7d 用量、花费）不见了，主题回到默认，插件全部失效。`~/.claude/statusline/statusline.sh` 明明还在，手动喂 JSON 也跑得出来。`~/.claude/settings.json` 从几千字节缩到一百出头，只剩 `env` 和 `model`。
 
-**根因**：Claude 用量跑满时用 `cc-switch` 切到别的大模型，它会**整文件重写** `~/.claude/settings.json` 来注入 `ANTHROPIC_BASE_URL` / `ANTHROPIC_AUTH_TOKEN` / `ANTHROPIC_*_MODEL`，而不是合并。它不认识的键（`statusLine`、`theme`、`enabledPlugins`）会被直接丢掉，文件从几百字节缩到一百出头。
+**根因**：`cc-switch` 每次切换供应商（以及启动时）都会重写 `~/.claude/settings.json`。它有个原生机制叫**公共配置（Common Config）**，存在 `~/.cc-switch/cc-switch.db` 的 `settings` 表 `common_config_claude` 键里，切换时合并进 `settings.json`——但它是**按供应商逐个开关的**（provider 行 `meta.commonConfigEnabled`）。
 
-**修复**：把 `settings.json` 纳入 chezmoi，切换后 `chezmoi apply ~/.claude/settings.json` 恢复；或手动补回：
+真正的坑在于：几个第三方供应商当初都勾了，唯独**切回来的那个 Claude Official 没勾**。所以切去 DeepSeek 时一切正常，切回官方时公共配置不写入，`statusLine` / `theme` / `enabledPlugins` 一起消失。
 
-```bash
-cd ~/.claude
-cp settings.json settings.json.bak-$(date +%Y%m%d-%H%M%S)
-jq '. + {statusLine: {type: "command", command: "~/.claude/statusline/statusline.sh", padding: 0}}' \
-  settings.json > settings.json.tmp && mv settings.json.tmp settings.json
-```
+**修复**：GUI → 编辑供应商 → Claude Official → 勾上「写入公共配置」，然后切换一次。四个供应商都勾上后，切换会自动带回全套键，不需要跑任何命令。
 
-需重启 Claude Code 生效（`statusLine` 是启动时读的）。
+勾上之后是**深度合并**：公共配置里没有的键（如 `modelSettings`）和已有对象的子键（如 `statusLine.padding`）都会保留。cc-switch 还会把 live 配置回填进公共配置。
 
-**注意**：cc-switch 会把第三方 API key 明文留在 `~/.claude/settings.json` 和 `~/.claude/backups/*.bak` 里。`TIMHX/dotfiles` 是**公开仓库**，所以 `.chezmoiignore` 对 `~/.claude` 采用先全忽略、再逐条 `!` 放行的白名单策略，只放 `CLAUDE.md`、`settings.json`、`skills/`、`statusline/`。
+**不要**把 `~/.claude/settings.json` 纳入 chezmoi。切到第三方供应商时 cc-switch 会往它的 `env` 写明文 `ANTHROPIC_AUTH_TOKEN`，而 `TIMHX/dotfiles` 是**公开仓库**，一次 `chezmoi add` 就泄漏了。所以 `.chezmoiignore` 对 `~/.claude` 采用先全忽略、再逐条 `!` 放行的白名单，只放 `CLAUDE.md`、`skills/`、`statusline/`——不含 `settings.json`。
+
+跨机器复用靠 `docs/cc-switch-common-config.json`（公共配置的脱敏导出，剔除了 `autoMode` 那段本机安全扫描），在新机器上手工填进 cc-switch 的「编辑公共配置」即可。公共配置里的路径记得用 `~` 而非绝对路径。
 
 ---
 
