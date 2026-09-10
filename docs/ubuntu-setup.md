@@ -132,6 +132,7 @@ chezmoi status
 ├── .oh-my-zsh/              # oh-my-zsh
 ├── .nvm/                    # Node.js
 ├── .local/share/chezmoi/    # dotfiles git repo
+├── .claude/                 # Claude Code（白名单纳管，见踩坑记录）
 ├── .zshrc                   # chezmoi 管理
 └── .ssh/id_ed25519          # GitHub
 ```
@@ -159,6 +160,25 @@ gsettings set "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/prof
 gsettings set "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/profiles:/:$PROFILE/" use-system-font false
 ```
 验证: `starship prompt` 应输出图标而非希腊字母。新开终端窗口生效。
+
+### cc-switch 切换供应商 → Claude Code statusline / 主题 / 插件消失
+
+**现象**：某天起 Claude Code 底部的 statusline（context、5h/7d 用量、花费）不见了，主题也回到默认，插件全部失效。`~/.claude/statusline/statusline.sh` 明明还在，手动喂 JSON 也跑得出来。
+
+**根因**：Claude 用量跑满时用 `cc-switch` 切到别的大模型，它会**整文件重写** `~/.claude/settings.json` 来注入 `ANTHROPIC_BASE_URL` / `ANTHROPIC_AUTH_TOKEN` / `ANTHROPIC_*_MODEL`，而不是合并。它不认识的键（`statusLine`、`theme`、`enabledPlugins`）会被直接丢掉，文件从几百字节缩到一百出头。
+
+**修复**：把 `settings.json` 纳入 chezmoi，切换后 `chezmoi apply ~/.claude/settings.json` 恢复；或手动补回：
+
+```bash
+cd ~/.claude
+cp settings.json settings.json.bak-$(date +%Y%m%d-%H%M%S)
+jq '. + {statusLine: {type: "command", command: "~/.claude/statusline/statusline.sh", padding: 0}}' \
+  settings.json > settings.json.tmp && mv settings.json.tmp settings.json
+```
+
+需重启 Claude Code 生效（`statusLine` 是启动时读的）。
+
+**注意**：cc-switch 会把第三方 API key 明文留在 `~/.claude/settings.json` 和 `~/.claude/backups/*.bak` 里。`TIMHX/dotfiles` 是**公开仓库**，所以 `.chezmoiignore` 对 `~/.claude` 采用先全忽略、再逐条 `!` 放行的白名单策略，只放 `CLAUDE.md`、`settings.json`、`skills/`、`statusline/`。
 
 ---
 
