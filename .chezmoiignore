@@ -12,3 +12,6 @@
 # provider API keys into its env block on every switch, and this repo is public.
 # Its durable keys are restored by cc-switch's Common Config instead — a sanitised
 # export lives at docs/cc-switch-common-config.json.
+
+# 仓库自身的文档，不是要部署到 ~ 的配置
+README.md
