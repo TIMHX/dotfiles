@@ -1,0 +1,31 @@
+{
+  "autoCompactWindow": 1000000,
+  "effortLevel": "medium",
+  "enabledPlugins": {
+    "context7@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "github@claude-plugins-official": true,
+    "openviking-memory@openviking": true,
+    "skill-creator@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "openviking": {
+      "source": {
+        "source": "url",
+        "url": "https://raw.githubusercontent.com/volcengine/OpenViking/main/.claude-plugin/marketplace.json"
+      }
+    }
+  },
+  "model": "opus",
+  "modelSettings": {
+    "claude-sonnet-5": {
+      "effortLevel": "medium"
+    }
+  },
+  "statusLine": {
+    "command": "~/.claude/statusline/statusline.sh",
+    "padding": 0,
+    "type": "command"
+  },
+  "theme": "dark"
+}
