@@ -1,0 +1,111 @@
+# ============================================================
+# Zsh 配置 | chezmoi 管理 | repo: TIMHX/dotfiles
+#
+# 本文件由 dot_zshrc.tmpl 生成。不要直接改 ~/.zshrc —— 下次
+# chezmoi apply 会覆盖掉。要改就改模板，然后 czp。
+#
+# 设计原则：机器差异优先用「装了才启用」的特性探测处理，只有
+# 真正只该存在于某台机器的东西（doppler / hermes）才用主机名
+# 分支。加一台新机器通常不需要动这个文件。
+# ============================================================
+
+# ---- oh-my-zsh ----
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME=""                    # 留空：提示符完全交给 starship，避免两者打架
+plugins=(git)
+[ -f "$ZSH/oh-my-zsh.sh" ] && source "$ZSH/oh-my-zsh.sh"
+
+# ---- PATH ----
+export PATH="$HOME/.local/bin:$PATH"
+[ -x /home/linuxbrew/.linuxbrew/bin/brew ] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# ---- NVM ----
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+# ---- 提示符 / 跳转 / 模糊查找 ----
+command -v starship >/dev/null && eval "$(starship init zsh)"
+command -v zoxide   >/dev/null && eval "$(zoxide init zsh --cmd cd)"
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# ---- 别名：有现代版就用，没有则回退原生 ----
+if command -v eza >/dev/null; then
+    alias ls='eza --icons'
+    alias ll='eza -alF --icons --git'
+    alias la='eza -a --icons'
+    alias l='eza -F --icons'
+    alias tree='eza --tree --icons'
+else
+    alias ls='ls --color=auto'
+    alias ll='ls -alF'
+    alias la='ls -A'
+    alias l='ls -CF'
+fi
+if command -v rg >/dev/null; then alias grep='rg'; else alias grep='grep --color=auto'; fi
+command -v bat >/dev/null && alias cat='bat'
+command -v fd  >/dev/null && alias find='fd'
+
+alias apt='sudo apt'
+alias systemctl='sudo systemctl'
+command -v docker >/dev/null && alias docker='sudo docker'
+
+# ---- Chezmoi dotfiles 管理 ----
+czp() {
+    chezmoi re-add
+    local SOURCE_DIR=$(chezmoi source-path)
+    if [ -n "$(git -C "$SOURCE_DIR" status --porcelain)" ]; then
+        echo "🧐 Current changes:"
+        git -C "$SOURCE_DIR" status --short
+        echo -n "⚠️  Commit and push? (y/n) "
+        read -r answer
+        if [[ "$answer" =~ ^[Yy]$ ]]; then
+            git -C "$SOURCE_DIR" add .
+            git -C "$SOURCE_DIR" commit -m "Auto-update: $(date +'%Y-%m-%d %H:%M:%S')"
+            git -C "$SOURCE_DIR" push
+            echo "✅ Done!"
+        else
+            echo "✖️  Cancelled."
+        fi
+    else
+        echo "✨ Up to date."
+    fi
+}
+
+cza() {
+    if [ -z "$1" ]; then
+        echo "Usage: cza <file_path>"
+        return 1
+    fi
+    chezmoi add "$1"
+    echo "➕ Added $1 to chezmoi."
+    czp
+}
+
+alias czu='chezmoi update'
+
+# ---- Tmux session 切换 (sesh + fzf) ----
+if command -v sesh >/dev/null; then
+    function t() {
+        local session=$(sesh list -z | fzf --height 40% --reverse --header "Connect to Session")
+        if [[ -n "$session" ]]; then
+            local clean_session=$(echo "$session" | sed 's/[^[:print:]]//g' | awk '{print $NF}')
+            sesh connect "$clean_session"
+        fi
+    }
+fi
+{{ if eq .chezmoi.hostname "racknerd-c3b1d83" }}
+# ---- VPS 专属：doppler + hermes ----
+export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+alias claude='doppler run -- claude'
+command -v doppler >/dev/null && eval "$(doppler completion zsh)"
+alias hu='hermes update && bash ~/hermes-custom-tools/hermes-patches/apply-patches.sh && hermes gateway restart'
+{{ end }}
+# ---- XDG ----
+export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
+[ -r /proc/self/sessionid ] && export XDG_SESSION_ID=$(cat /proc/self/sessionid)
+
+setopt INTERACTIVE_COMMENTS
+
+# ---- uv ----
+[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
