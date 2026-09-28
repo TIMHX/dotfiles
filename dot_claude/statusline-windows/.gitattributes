@@ -1,0 +1,2 @@
+# Git Bash 跑不了 CRLF 脚本；Windows 上 core.autocrlf=true 时也保持 LF
+*.sh text eol=lf

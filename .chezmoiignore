@@ -7,6 +7,11 @@
 !.claude/skills/**
 !.claude/statusline
 !.claude/statusline/**
+{{- if eq .chezmoi.os "windows" }}
+# Windows 版 statusline 单独一份，只在 Windows 上放行；其它系统仍被 .claude/** 忽略
+!.claude/statusline-windows
+!.claude/statusline-windows/**
+{{- end }}
 
 # settings.json is deliberately NOT allowlisted: cc-switch writes plaintext
 # provider API keys into its env block on every switch, and this repo is public.
