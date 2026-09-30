@@ -154,6 +154,11 @@ VPS 上 `ZSH_THEME="robbyrussell"` 和 `eval "$(starship init zsh)"` 同时存�
 `$HOME/go/bin`、hermes 配置。同步到异构机器时**先 `chezmoi diff` 看清楚**，或者只
 apply 明确要同步的路径：`chezmoi apply ~/.zshrc ~/.tmux.conf ~/bin`。
 
+2026-09-30 已收口：`.zshrc` 用主机名分支，VPS 在 `.chezmoiignore` 里跳过 `.bashrc`、
+`.config/Code`、`bin/cc-layout`；`docs/` 和 `.config/nvim/.git` 不再部署。两台机器
+`chezmoi status` 为空，全量 apply 已安全。新增机器专属文件时，照这个模式加进
+`.chezmoiignore` 的主机名分支，保持 `status` 为空。
+
 `.bashrc` 目前**仍未模板化**，VPS 那份还是脱管状态。
 
 ### 通过 ssh 跑 `chezmoi apply` 卡在无 TTY
