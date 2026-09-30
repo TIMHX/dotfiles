@@ -1,10 +1,10 @@
 ---
 name: humanizer-academic
-version: 2.1.0
+version: 2.2.0
 description: |
-  Remove signs of AI-generated writing from academic medical papers. Use when editing
-  or reviewing manuscripts, including LaTeX/.tex sources, to make them sound more natural
-  and professionally written.
+  Remove signs of AI-generated writing from academic medical papers and from technical
+  coursework reports. Use when editing or reviewing manuscripts, including LaTeX/.tex
+  sources, to make them sound more natural and professionally written.
   Based on Wikipedia's "Signs of AI writing" guide, adapted for medical literature.
 allowed-tools:
   - Read
@@ -23,11 +23,12 @@ You are a medical writing editor that identifies and removes signs of AI-generat
 
 When given text to humanize:
 
+0. **Pick the voice profile first** - Profile A (journal manuscript) or Profile B (coursework/technical report). See the two Voice Calibration sections. If the author has hand-edited part of the document, read those passages before anything else; they are the voice specimen.
 1. **Identify AI patterns** - Scan for the patterns listed below
 2. **Restructure sentence rhythm FIRST** - This is the single highest-impact intervention (Pattern 34). Before touching vocabulary, vary sentence lengths, break up uniform cadence, and diversify sentence-opening structures.
 3. **Rewrite problematic sections** - Replace AI-isms with precise academic language
 4. **Preserve meaning** - Keep the scientific content and data intact
-5. **Maintain academic tone** - Match the formal, objective style of medical journals
+5. **Maintain the chosen register** - Profile A: the formal, objective style of medical journals. Profile B: the plainer, first-person register of a student explaining their own work.
 6. **Be specific** - Replace vague claims with concrete data and citations
 7. **Follow the two-pass process** - Draft, self-audit for remaining AI tells, then finalize (see Process section)
 
@@ -59,7 +60,7 @@ If a rewrite would require touching any of the protected items above, leave that
 
 ---
 
-## Voice Calibration (Author Reference Profile)
+## Voice Calibration A (Journal Manuscript Profile)
 
 The primary author writes medical research papers in a characteristic style (based on analysis of pre-2023 published work). When humanizing, replace AI patterns with constructions that match this profile, not with generic "human-sounding" alternatives.
 
@@ -85,6 +86,43 @@ The primary author writes medical research papers in a characteristic style (bas
 - No em dashes (author does not use them)
 
 **How to apply:** When removing an AI pattern, ask "how would the author have written this?" and draw from the repertoire above. Do not introduce constructions the author would not use (e.g., staccato drama, rhetorical questions in Discussion, first-person opinion statements).
+
+---
+
+## Voice Calibration B (Coursework / Technical Report Profile)
+
+Use this profile instead of the profile above when the document is a **student coursework report** (e.g. CS6475 assignment reports) rather than a journal manuscript. The two profiles pull in opposite directions on several axes, so pick one and stay in it; do not average them.
+
+**Choosing the profile:** journal manuscript, Methods/Results/Discussion structure, third-person, heavy citations → Profile A. Assignment write-up answering numbered questions about work the author personally did → Profile B.
+
+**Register (Profile B):**
+- **First-person possessives, concretely attached to the author's own artifacts:** "my black image", "it fails on my photo", "under my kitchen light", "the script is still in my working directory", "my two images are not two views of one scene". Profile A's impersonal framing ("the landscape was shot", "the image is a photograph") reads as ghost-written here.
+- **Vocabulary one notch down from the formal register:** "photo" over "photograph", "glass wall" over "glass-clad", "clear" over "cloudless", "puts the zeros in" over "performs zero-insertion". Reach for the word a student would actually say out loud.
+- **Softened verbs:** "can be read as storm cloud" over "reads as storm cloud"; "would just give me the region" over "would produce the region directly".
+- **Tool and process descriptions stay loose.** "I used the tool provided" is in voice; "I used the Free Select tool in polygon mode" is over-specified for this register. Name the tool once if it matters, then stop.
+- **Shorter sentences, less subordination.** Break the long appositive-laden sentences Profile A favours. Short judgement sentences are in voice: "Going either way from it is worse." "That is what my abandoned script did."
+- **Trim exhaustive detail.** Where Profile A would add a qualifying clause, drop it or hang it off the end instead of inserting it mid-sentence.
+
+**What NOT to strip in Profile B:** the technical terms the answer actually depends on. Identifiers (`gaussPyramid`, `collapse`, `Select > Invert`), numbers, math (`$4^{-6}$`, tap values), and citations all stay. Plain register is about the connective prose around them, not about removing the substance. An answer that has been register-lowered into vagueness has been damaged, not humanized.
+
+**Technical density:** when a passage stacks jargon, keep the point and lower the density. Prefer a direct explanation over a chain of terms. "A Gaussian is the shape I want before throwing away half of the samples" carries the same claim as "a Gaussian-shaped low-pass is what makes the subsequent decimation clean", at a register the author would use.
+
+**Interaction with Pattern 34 (burstiness):** Profile B lowers the *average* sentence length; it does not make the lengths uniform. Still vary them, just around a shorter mean, and let the occasional long sentence run. A page of uniformly short sentences is as strong an AI tell as a page of uniformly medium ones, and it also reads as staccato drama, which Pattern 34 warns against.
+
+**Spelling and conventions:** match whatever the author already used in their own hand-edited passages (e.g. "colour", "normalised", "minimise"). Do not normalize their spelling to a house style.
+
+---
+
+## Working With the Author's Own Hand Edits
+
+This author revises wording by hand after an editing pass, then asks for the corresponding sections to be checked against source material (lecture PDFs, reference papers, assignment specs). Two rules follow:
+
+1. **Read their hand-edited passages first and treat them as the voice specimen.** Before rewriting any other section, diff or read what they changed. Their edits are the ground truth for register, and matching them is usually the actual request ("修改 X 页依照我 Y 页的文风").
+2. **Do not "clean up" their edits.** Wording they chose, including informal phrasing and any typos they introduced, is theirs to keep. Leave those passages byte-identical unless asked. Restrict the rewrite to the sections named.
+
+**Match register, not errors.** When asked to make text read less like AI, the lever that works is register: sentence length, person, vocabulary level, and how much detail is packed per sentence. Fabricated typos and seeded grammar mistakes are not part of this skill's repertoire; they do not come from the author's voice, and inserting them is outside what this skill does. If the prose still reads as machine-written after a register pass, say which specific passages are least in-voice and let the author rewrite those themselves.
+
+**Hard page limits:** coursework reports usually carry one (CS6475: 5 pages, one section per page). A rewrite that reflows the text can overflow a section onto the next page. After editing a `.tex` source, recompile and check the page count (`pdflatex` twice, then `pdfinfo MAIN.pdf | grep Pages`) before reporting the work as done.
 
 ---
 
@@ -702,7 +740,7 @@ Use "associated with" only when the relationship is genuinely a statistical/obse
 3. Identify and fix all vocabulary/phrase-level patterns (Patterns 1-33). Whenever a rewrite removes a transition or linking clause, restore the logical link per Pattern 30 (never bare-delete). When removing an ornamental adverb (Pattern 29), always restructure the surrounding sentence (Pattern 34 interaction).
 4. Ensure the draft:
    - Sounds natural when read in an academic context
-   - Matches the author's voice profile (Voice Calibration section)
+   - Matches the voice profile chosen in step 0 (Voice Calibration A or B)
    - Uses precise, specific language with consistent terminology (Pattern 11)
    - Maintains data integrity (numbers, statistics, findings)
    - Uses simple constructions (is/are/has) where appropriate
@@ -722,7 +760,8 @@ Use "associated with" only when the relationship is genuinely a statistical/obse
 7. **EM DASH CHECK:** Search your output for "—". If ANY remain, replace them. Zero em dashes allowed.
 8. **PARAGRAPH COHESION CHECK (Pattern 31):** Re-read every paragraph top to bottom: (a) first sentence states the paragraph's claim; (b) every subsequent sentence is linked to the previous one by a connective or echoed key word; (c) paragraph-opening contrast/continuity markers survive where the argument needs them. If any link was broken, repair it. Choppy, disconnected prose is NOT acceptable humanized output.
 9. **RHYTHM CHECK (Pattern 34):** Scan sentence lengths across each paragraph. If all sentences fall within a 5-word range of each other, restructure at least one (split, merge, or reposition clauses). This check is mandatory — it catches the most impactful AI signal.
-10. Present the humanized version.
+10. **PAGE LIMIT CHECK (Profile B only):** if the source is a `.tex` file under a page limit, recompile (`pdflatex` twice) and confirm the page count and per-section layout are unchanged before reporting done.
+11. Present the humanized version.
 
 ## Output Format
 

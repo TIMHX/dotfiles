@@ -20,3 +20,16 @@
 
 # 仓库自身的文档，不是要部署到 ~ 的配置
 README.md
+docs/
+
+# nvim 目录本身是 LazyVim starter 的 git clone；它的 .git 属于那个仓库，不归 dotfiles 管
+.config/nvim/.git
+.config/nvim/.git/**
+
+{{- if eq .chezmoi.hostname "racknerd-c3b1d83" }}
+# VPS：桌面专用的东西不部署；.bashrc 在 VPS 独立维护（默认 shell 是 zsh）
+.bashrc
+.config/Code
+.config/Code/**
+bin/cc-layout
+{{- end }}
