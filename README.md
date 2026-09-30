@@ -26,7 +26,7 @@ API key，本仓库是公开的）。详见 `.chezmoiignore`。
 | zoxide / fzf / sesh | ✅ | ✅ | ✅ |
 | eza / bat / fd | ✅ | ✗ | ✗ |
 | rg | ✅ | ✅ | ✗ |
-| 专属 | — | doppler / hermes | — |
+| 专属 | `claude()` 从 bws 取 GitHub MCP token | hermes（`hu`） | `claude()` 同左 |
 
 ---
 
@@ -40,8 +40,9 @@ API key，本仓库是公开的）。详见 `.chezmoiignore`。
 sesh、eza/bat/fd/rg 全部 `command -v` 判断，装了才启用；`ls` / `grep` 有现代版就用现代版，
 没有就回退原生。所以同一份配置三端都能直接跑，加新机器通常**不需要改模板**。
 
-全文件只有一处 `{{ if eq .chezmoi.hostname }}` 分支，包住 VPS 的 doppler 和 hermes ——
-它们本就只该存在于那一台。
+全文件只有一组主机名分支：`{{ if eq .chezmoi.hostname }}` 包住 VPS 的 hermes，
+`{{ if ne ... }}` 包住非 VPS 的 `claude()`（启动时从 bws 取 `GITHUB_TOKEN` 给 GitHub MCP，只进进程环境）。
+doppler 已于 2026-09 退役，密钥统一走 bws。
 
 自带的几个函数：`czp` 收改动并提交推送、`cza <file>` 加文件再走 `czp`、`czu` 拉取更新、
 `t` 用 sesh + fzf 切 tmux session。
@@ -150,7 +151,7 @@ VPS 上 `ZSH_THEME="robbyrussell"` 和 `eval "$(starship init zsh)"` 同时存�
 ### 全量 `chezmoi apply` 会踩掉机器专属配置
 
 仓库里的 `.bashrc` / `.zshrc` 长期只有桌面那一份。在 VPS 上跑全量 apply 会丢掉它的
-`$HOME/go/bin`、doppler/hermes 配置。同步到异构机器时**先 `chezmoi diff` 看清楚**，或者只
+`$HOME/go/bin`、hermes 配置。同步到异构机器时**先 `chezmoi diff` 看清楚**，或者只
 apply 明确要同步的路径：`chezmoi apply ~/.zshrc ~/.tmux.conf ~/bin`。
 
 `.bashrc` 目前**仍未模板化**，VPS 那份还是脱管状态。

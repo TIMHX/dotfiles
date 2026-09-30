@@ -5,7 +5,7 @@
 # chezmoi apply 会覆盖掉。要改就改模板，然后 czp。
 #
 # 设计原则：机器差异优先用「装了才启用」的特性探测处理，只有
-# 真正只该存在于某台机器的东西（doppler / hermes）才用主机名
+# 真正只该存在于某台机器的东西（VPS 的 hermes、桌面的 claude/bws）才用主机名
 # 分支。加一台新机器通常不需要动这个文件。
 # ============================================================
 
@@ -94,11 +94,10 @@ if command -v sesh >/dev/null; then
     }
 fi
 {{ if eq .chezmoi.hostname "racknerd-c3b1d83" }}
-# ---- VPS 专属：doppler + hermes ----
+# ---- VPS 专属：hermes ----
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
-alias claude='doppler run -- claude'
-command -v doppler >/dev/null && eval "$(doppler completion zsh)"
-alias hu='hermes update && bash ~/hermes-custom-tools/hermes-patches/apply-patches.sh && hermes gateway restart'
+# hermes update 默认会 drain-first 重启 gateway；本地 fix 靠 updates.parked_branch_strategy 保留
+alias hu='CC=gcc CXX=g++ hermes update'
 {{ end }}
 {{ if ne .chezmoi.hostname "racknerd-c3b1d83" }}
 # ---- Claude Code: GitHub MCP token from bws (GITHUB_TOKEN), process env only, never on disk ----

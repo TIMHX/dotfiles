@@ -182,5 +182,5 @@ gsettings set "org.gnome.Terminal.Legacy.Profile:/org/gnome/terminal/legacy/prof
 ## 与 VPS 的差异
 
 - VPS 用 apt 装系统包，桌面用 brew（免 sudo）
-- VPS 有 doppler/hermes 配置，桌面版已精简
+- VPS 有 hermes 配置（doppler 已退役，密钥走 bws），桌面版已精简
 - dotfiles 共用 `TIMHX/dotfiles.git`，双向同步
