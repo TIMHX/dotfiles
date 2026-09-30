@@ -100,6 +100,20 @@ alias claude='doppler run -- claude'
 command -v doppler >/dev/null && eval "$(doppler completion zsh)"
 alias hu='hermes update && bash ~/hermes-custom-tools/hermes-patches/apply-patches.sh && hermes gateway restart'
 {{ end }}
+{{ if ne .chezmoi.hostname "racknerd-c3b1d83" }}
+# ---- Claude Code: GitHub MCP token from bws (GITHUB_TOKEN), process env only, never on disk ----
+claude() {
+  if [[ -z $GITHUB_PERSONAL_ACCESS_TOKEN && -r ~/.bws.env ]]; then
+    local tok
+    tok=$( (set -a; source ~/.bws.env; ~/.local/bin/bws secret get 9ac9b040-cde8-4cab-a5c0-b452016baf21 -o json 2>/dev/null) | jq -r '.value // empty' )
+    if [[ -n $tok ]]; then
+      GITHUB_PERSONAL_ACCESS_TOKEN=$tok command claude "$@"
+      return
+    fi
+  fi
+  command claude "$@"
+}
+{{ end }}
 # ---- XDG ----
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
